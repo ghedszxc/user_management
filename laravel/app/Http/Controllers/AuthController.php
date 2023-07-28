@@ -84,7 +84,12 @@ class AuthController extends Controller
      */
     public function update(Request $request, $id)
     {
-        return User::find($id)->update($request->all());
+        return User::find($id)->update([
+            'first_name' => $request['first_name'],
+            'last_name' => $request['last_name'],
+            'address' => $request['address'],
+            'email' => $request['email']
+        ]);
     }
 
     /**
@@ -119,8 +124,10 @@ class AuthController extends Controller
         }
     }
 
-    public function authLogout(Request $request)
+    public function updateAccountPassword(Request $request, $id)
     {
-        // auth()->user()->tokens()->delete();
+        return User::find($id)->update([
+            'password' => bcrypt($request['password'])
+        ]);
     }
 }

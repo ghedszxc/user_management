@@ -24,6 +24,7 @@
         <v-data-table :headers="headers" :items="userList">
           <template v-slot:item.actions="{ item }">
             <edit-account :selectedAccount="item"></edit-account>
+            <change-password :selectedAccount="item"></change-password>
             <delete-account :selectedAccount="item"></delete-account>
           </template>
         </v-data-table>
@@ -34,11 +35,13 @@
 <script>
 import Add from './actions/Add.vue'
 import Edit from './actions/Edit.vue'
+import ChangePassword from './actions/ChangePassword.vue'
 import Delete from './actions/Delete.vue'
 export default {
   components: {
     'create-account': Add,
     'edit-account': Edit,
+    'change-password': ChangePassword,
     'delete-account': Delete,
   },
   data:() => ({

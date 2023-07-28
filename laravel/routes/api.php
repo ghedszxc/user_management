@@ -31,4 +31,6 @@ Route::post('auth/createAccount', [AuthController::class, 'createAccount']);
 Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::resource('auth', AuthController::class);
     Route::get('auth/getAuthuser/{id}', [AuthController::class, 'getAuthuser']);
+    Route::put('auth/updateAccountPassword/{id}', [AuthController::class, 'updateAccountPassword']);
+    
 });
