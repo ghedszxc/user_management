@@ -1,0 +1,8 @@
+- date selection
+  -> info attendance from selected date
+  -> know how many 1T-5T this day
+  -> table
+      - name, network, birthday, age, status, address, cell leader, primary leader
+
+  -> birthday celebrant for this week (mon-sun)
+  -> dashboard -> event -> attendance
