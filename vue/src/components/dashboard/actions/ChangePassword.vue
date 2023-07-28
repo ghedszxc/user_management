@@ -2,13 +2,13 @@
     <div style="display: inline-block;">
         <v-btn @click="updateDialog(true)"
             icon>
-            <v-icon color="orange">mdi-pencil</v-icon>
+            <v-icon color="success">mdi-lock</v-icon>
         </v-btn>
 
-        <v-dialog v-model="update_account_dialog" max-width="500" persistent>
+        <v-dialog v-model="change_password_dialog" max-width="500" persistent>
             <v-card>
                 <v-card-title class="text-center">
-                    Update Account
+                    Change Password
                     <v-spacer></v-spacer>
                     <v-btn icon @click="updateDialog(false)">
                         <v-icon>mdi-close</v-icon>
@@ -19,42 +19,6 @@
                     <v-form ref="form">
                         <v-layout wrap>
                             <v-flex xs12>
-                                <v-text-field
-                                    v-model="form.first_name"
-                                    label="Given Name"
-                                    placeholder="Given Name"
-                                    outlined :disabled="formDisabled"
-                                    :rules="[field_rules.required]"
-                                ></v-text-field>
-                            </v-flex>
-                            <v-flex xs12>
-                                <v-text-field
-                                    v-model="form.last_name"
-                                    label="Surname"
-                                    placeholder="Surname"
-                                    outlined :disabled="formDisabled"
-                                    :rules="[field_rules.required]"
-                                ></v-text-field>
-                            </v-flex>
-                            <v-flex xs12>
-                                <v-textarea
-                                    v-model="form.address"
-                                    label="Address"
-                                    placeholder="Address" rows="2"
-                                    outlined :disabled="formDisabled"
-                                    :rules="[field_rules.required]"
-                                ></v-textarea>
-                            </v-flex>
-                            <v-flex xs12>
-                                <v-text-field
-                                    v-model="form.email"
-                                    label="Email"
-                                    placeholder="Email"
-                                    outlined :disabled="formDisabled"
-                                    :rules="[field_rules.required]"
-                                ></v-text-field>
-                            </v-flex>
-                            <!-- <v-flex xs12>
                                 <v-text-field
                                     v-model="form.password"
                                     placeholder="Password"
@@ -78,7 +42,7 @@
                                     
                                     :rules="[field_rules.required, (value) => (value === form.password) || 'Password confirmation does not match']"
                                 ></v-text-field>
-                            </v-flex> -->
+                            </v-flex>
                         </v-layout>
                     </v-form>
                 </v-card-text>
@@ -97,38 +61,30 @@ export default {
         selectedAccount: Object
     },
     data:() => ({
-        update_account_dialog: false,
+        change_password_dialog: false,
 
         form: {
-            first_name: '',
-            last_name: '',
-            address: '',
-            email: ''
+            password: '',
+            reconfirm_password: ''
         },
 
-        // show_password: false,
-        // show_reconfirm_password: false
+        show_password: false,
+        show_reconfirm_password: false
     }),
     methods: {
         updateDialog(data) {
-            this.update_account_dialog = data
-
-            if (data) {
-                
-                this.form = {...this.selectedAccount}
-            }
+            this.change_password_dialog = data
         },
         updateAccount(){
             if (this.$refs.form.validate()) {
                 this.formDisabled = true
 
-                this.$http.put(`api/auth/${this.selectedAccount.id}`, this.form).then(res => {
+                this.$http.put(`api/auth/updateAccountPassword/${this.selectedAccount.id}`, { password: this.form.password }).then(res => {
                     if (res.body.status) {
                         this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'error', timeout: 3000, message: res.body.message })
                         this.formDisabled = false
                     } else {
-                        this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'success', timeout: 3000, message: `${this.selectedAccount.email} information is updated.` })
-                        this.$store.commit('users/UPDATE_USER', {...this.form})
+                        this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'success', timeout: 3000, message: `${this.selectedAccount.email} password is updated.` })
                         this.clearForm()
                     }
                 })
@@ -138,14 +94,9 @@ export default {
         clearForm() {
             this.$refs.form.reset()
             this.formDisabled = false
-            this.update_account_dialog = false
+            this.change_password_dialog = false
 
             this.form = {
-                first_name: '',
-                last_name: '',
-                address: '',
-                email: '',
-
                 password: '',
                 reconfirm_password: ''
             }
