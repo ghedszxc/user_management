@@ -4,23 +4,29 @@
       <v-flex xs12 class="d-flex justify-center">
         <create-post></create-post>
       </v-flex>
-      <v-flex xs12 class="text-center title pt-5">
+      <v-flex xs12 class="text-center title py-5 font-weight-black text-uppercase">
         Dashboard
+      </v-flex>
+      <v-flex xs12>
+        <v-layout wrap>
+          <v-flex xs12 class="d-flex justify-center">
+            <post-card style="width: 52%;"></post-card>
+          </v-flex>
+          <v-flex xs12 class="d-flex justify-center">
+            <post-card style="width: 52%;"></post-card>
+          </v-flex>
+        </v-layout>
       </v-flex>
     </v-layout>
   </div>
 </template>
 <script>
+import PostCard from './PostCard.vue'
 import Add from './actions/Add.vue'
-// import Edit from './actions/Edit.vue'
-// import ChangePassword from './actions/ChangePassword.vue'
-// import Delete from './actions/Delete.vue'
 export default {
   components: {
-    'create-post': Add,
-    // 'edit-account': Edit,
-    // 'change-password': ChangePassword,
-    // 'delete-account': Delete,
+    'post-card': PostCard,
+    'create-post': Add
   },
   data:() => ({
     search: '',

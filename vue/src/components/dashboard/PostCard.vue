@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <v-card class="grey lighten-4">
+    <div class="pb-4">
+        <v-card v-if="editPost">
             <v-card-text class="pb-0">
                 <v-form ref="form">
                     <v-layout wrap>
@@ -35,60 +35,62 @@
             </v-card-text>
             <v-card-actions class="pt-0">
                 <v-spacer></v-spacer>
-                <v-btn class="primary px-5" @click="createPost()">
-                    Post
+                <v-btn class="success px-5" @click="updatePost()">
+                    Update
+                </v-btn>
+                <v-btn class="error px-5" @click="updateCardDisplay(false)">
+                    Discard
                 </v-btn>
             </v-card-actions>
+        </v-card>
+
+        <v-card v-else>
+            <v-card-title>
+                <v-layout wrap>
+                    <v-flex xs12 class="title text-uppercase">
+                        {{form.title}}
+                    </v-flex>
+                    <v-flex xs12 class="caption">
+                        Type: {{form.type}}
+                    </v-flex>
+                    <v-flex xs12 class="caption">
+                        Author: {{form.author}}
+                    </v-flex>
+                </v-layout>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="updateCardDisplay(true)">
+                    <v-icon color="orange">mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn icon>
+                    <v-icon color="red">mdi-delete</v-icon>
+                </v-btn>
+            </v-card-title>
+            <v-divider class="mb-2"></v-divider>
+            <v-card-text class="text-truncate">
+                {{form.message}}
+            </v-card-text>
         </v-card>
     </div>
 </template>
 <script>
 export default {
+    props: {
+        selectedPost: Object
+    },
     data:() => ({
-        form: {
-            title: '',
-            message: '',
-            type: '',
-            author: ''
-        },
+        editPost: false,
+        post_type: ['News', 'Update', 'Task'],
 
-        post_type: ['News', 'Update', 'Task']
+        form: {
+            title: 'songs',
+            message: 'this is my message for myself',
+            type: 'News',
+            author: 'ghed'
+        }
     }),
     methods: {
-        updateDialog(data) {
-            this.create_account_dialog = data
-        },
-        registerAccount(){
-            if (this.$refs.form.validate()) {
-                this.formDisabled = true
-
-                this.$http.post('api/auth/createAccount', this.form).then(res => {
-                    if (res.body.status) {
-                        this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'error', timeout: 3000, message: res.body.message })
-                        this.formDisabled = false
-                    } else {
-                        this.clearForm()
-                        this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'success', timeout: 3000, message: `Account is successfully created.` })
-                        this.$route.path == '/user' && this.$store.commit('users/ADD_NEW_USER', res.body)
-                    }
-                })
-            }
-        },
-        
-        clearForm() {
-            this.$refs.form.reset()
-            this.formDisabled = false
-            this.create_account_dialog = false
-
-            this.form = {
-                first_name: '',
-                last_name: '',
-                address: '',
-                email: '',
-
-                password: '',
-                reconfirm_password: ''
-            }
+        updateCardDisplay(data){
+            this.editPost = data
         }
     }
 }
