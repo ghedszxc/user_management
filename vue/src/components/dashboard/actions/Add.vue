@@ -55,21 +55,20 @@ export default {
         post_type: ['News', 'Update', 'Task']
     }),
     methods: {
-        updateDialog(data) {
-            this.create_account_dialog = data
-        },
-        registerAccount(){
+        createPost(){
+
+            this.form.author = `${this.authUser.first_name} ${this.authUser.last_name}`
             if (this.$refs.form.validate()) {
                 this.formDisabled = true
 
-                this.$http.post('api/auth/createAccount', this.form).then(res => {
+                this.$http.post('api/post', this.form).then(res => {
                     if (res.body.status) {
                         this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'error', timeout: 3000, message: res.body.message })
                         this.formDisabled = false
                     } else {
                         this.clearForm()
-                        this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'success', timeout: 3000, message: `Account is successfully created.` })
-                        this.$route.path == '/user' && this.$store.commit('users/ADD_NEW_USER', res.body)
+                        this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'success', timeout: 3000, message: `Post is successfully created.` })
+                        this.$store.commit('posts/ADD_NEW_POST', res.body)
                     }
                 })
             }
@@ -78,16 +77,12 @@ export default {
         clearForm() {
             this.$refs.form.reset()
             this.formDisabled = false
-            this.create_account_dialog = false
 
             this.form = {
-                first_name: '',
-                last_name: '',
-                address: '',
-                email: '',
-
-                password: '',
-                reconfirm_password: ''
+                title: '',
+                message: '',
+                type: '',
+                author: ''
             }
         }
     }

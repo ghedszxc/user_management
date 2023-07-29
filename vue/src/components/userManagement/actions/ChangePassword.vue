@@ -79,7 +79,7 @@ export default {
             if (this.$refs.form.validate()) {
                 this.formDisabled = true
 
-                this.$http.put(`api/auth/updateAccountPassword/${this.selectedAccount.id}`, { password: this.form.password }).then(res => {
+                this.$http.put(`api/auth/updateAccountPassword/${this.selectedAccount.email}`, { password: this.form.password }).then(res => {
                     if (res.body.status) {
                         this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'error', timeout: 3000, message: res.body.message })
                         this.formDisabled = false

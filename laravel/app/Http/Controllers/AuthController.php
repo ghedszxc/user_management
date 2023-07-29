@@ -126,8 +126,16 @@ class AuthController extends Controller
 
     public function updateAccountPassword(Request $request, $id)
     {
-        return User::find($id)->update([
+        return User::where('email', $id)->update([
             'password' => bcrypt($request['password'])
         ]);
     }
+
+    public function validateEmail($id)
+    {
+        $findAccount = User::where('email', $id)->get();
+        return count($findAccount);
+    }
+
+    
 }

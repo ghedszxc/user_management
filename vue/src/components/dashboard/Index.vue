@@ -9,11 +9,11 @@
       </v-flex>
       <v-flex xs12>
         <v-layout wrap>
-          <v-flex xs12 class="d-flex justify-center">
-            <post-card style="width: 52%;"></post-card>
-          </v-flex>
-          <v-flex xs12 class="d-flex justify-center">
-            <post-card style="width: 52%;"></post-card>
+          <v-flex xs12
+            class="d-flex justify-center"
+            v-for="(data, key) in postList"
+            :key="key">
+            <post-card style="width: 52%;" :selectedPost="data"></post-card>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -28,27 +28,14 @@ export default {
     'post-card': PostCard,
     'create-post': Add
   },
-  data:() => ({
-    search: '',
-
-    headers: [
-      { text: 'Given Name', value: 'first_name', sortable: false },
-      { text: 'Surname', value: 'last_name', sortable: false },
-      { text: 'Address', value: 'address', sortable: false },
-      { text: 'Email', value: 'email', sortable: false },
-      { text: 'Actions', value: 'actions', sortable: false },
-    ]
-  }),
   computed:{
-    userList(){
-      return this.$store.state.users.userList.filter(value => {
-        return value.first_name.toLowerCase().includes(this.search.toLowerCase())
-      })
+    postList(){
+      return this.$store.state.posts.postList
     }
   },
   mounted(){
-    this.$http.get('api/auth').then(res => {
-      this.$store.commit('users/GET_USER_LIST', res.body)
+    this.$http.get('api/post').then(res => {
+      this.$store.commit('posts/GET_POST_LIST', res.body)
     })
   }
 }

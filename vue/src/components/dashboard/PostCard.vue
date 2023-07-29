@@ -47,25 +47,25 @@
         <v-card v-else>
             <v-card-title>
                 <v-layout wrap>
-                    <v-flex xs12 class="title text-uppercase">
+                    <v-flex xs12 class="title text-uppercase font-weight-bold">
                         {{form.title}}
                     </v-flex>
                     <v-flex xs12 class="caption">
-                        Type: {{form.type}}
+                        <b>Type:</b> {{form.type}}
                     </v-flex>
                     <v-flex xs12 class="caption">
-                        Author: {{form.author}}
+                        <b>Author:</b> {{form.author}}
                     </v-flex>
                 </v-layout>
                 <v-spacer></v-spacer>
-                <v-btn icon @click="updateCardDisplay(true)">
+                <v-btn icon @click="updateCardDisplay(true)" v-if="`${authUser.first_name} ${authUser.last_name}` == form.author">
                     <v-icon color="orange">mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn icon>
+                <v-btn icon @click="deletePost()" v-if="`${authUser.first_name} ${authUser.last_name}` == form.author">
                     <v-icon color="red">mdi-delete</v-icon>
                 </v-btn>
             </v-card-title>
-            <v-divider class="mb-2"></v-divider>
+            <v-divider></v-divider>
             <v-card-text class="text-truncate">
                 {{form.message}}
             </v-card-text>
@@ -82,15 +82,46 @@ export default {
         post_type: ['News', 'Update', 'Task'],
 
         form: {
-            title: 'songs',
-            message: 'this is my message for myself',
-            type: 'News',
-            author: 'ghed'
+            title: '',
+            message: '',
+            type: '',
+            author: ''
         }
     }),
+    mounted(){
+        this.form = {...this.selectedPost}
+    },
     methods: {
         updateCardDisplay(data){
             this.editPost = data
+        },
+
+        updatePost(){
+            if (this.$refs.form.validate()) {
+                this.formDisabled = true
+
+                this.$http.put(`api/post/${this.selectedPost.id}`, this.form).then(res => {
+                    if (res.body.status) {
+                        this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'error', timeout: 3000, message: res.body.message })
+                        this.formDisabled = false
+                    } else {
+                        this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'success', timeout: 3000, message: `Post information is updated.` })
+                        this.$store.commit('posts/UPDATE_POST', {...this.form})
+                        this.updateCardDisplay(false)
+                    }
+                })
+            }
+        },
+        deletePost(){
+            this.$http.delete(`api/post/${this.selectedPost.id}`).then(res => {
+                if (res.status == 200) {
+                    this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'success', message: `Post was successfully deleted` })
+                    this.$store.commit('posts/DELETE_POST', this.selectedPost.id)
+                } else {
+                    this.$store.commit('UPDATE_SNACKBAR', { snackbar: true, color: 'error', message: `${res.body}` })
+
+                }
+            })
         }
     }
 }
